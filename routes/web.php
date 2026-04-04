@@ -20,7 +20,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index']);
     Route::resource('data-admin', DataAdminController::class);
+    Route::delete('/dataset/delete-all', [DatasetController::class, 'deleteAll'])
+        ->name('dataset.deleteAll');
     Route::resource('dataset', DatasetController::class);
+
     Route::post('dataset/import', [DatasetController::class, 'import'])->name('dataset.import');
     Route::resource('proses', ProsesController::class);
     // Custom route for fetching datasets based on selected cluster

@@ -4,54 +4,80 @@
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h4 class="m-0 font-weight-bold text-primary">Create New Dataset</h4>
+                <h4 class="m-0 font-weight-bold text-primary">Tambah Dataset</h4>
             </div>
+
             <div class="card-body">
                 <form action="{{ route('dataset.store') }}" method="POST">
                     @csrf
-                    <div class="form-group">
-                        <label for="nama_platform_e_wallet">Nama Platform E-Wallet</label>
-                        <input type="text" class="form-control" id="nama_platform_e_wallet" name="nama_platform_e_wallet"
-                            required>
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <label>Kode</label>
+                            <input type="text" name="kode" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Nama Produk</label>
+                            <input type="text" name="produk" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Kategori Barang</label>
+                            <select name="kategori_barang" class="form-control" required>
+                                <option value="">-- Pilih --</option>
+                                <option value="makanan">Makanan</option>
+                                <option value="minuman">Minuman</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Harga</label>
+                            <input type="number" name="harga" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label>Januari</label>
+                            <input type="number" name="january_jumlah_product" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label>Februari</label>
+                            <input type="number" name="februari_jumlah_product" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label>Maret</label>
+                            <input type="number" name="maret_jumlah_product" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label>April</label>
+                            <input type="number" name="april_jumlah_product" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Total Penjualan</label>
+                            <input type="number" name="total_penjualan" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Total Produk</label>
+                            <input type="number" name="total_product" class="form-control" required>
+                        </div>
+
                     </div>
 
-                    <div class="form-group">
-                        <label for="VTP">VTP</label>
-                        <input type="text" class="form-control" id="VTP" name="VTP" required>
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary">
+                            Simpan
+                        </button>
+                        <a href="{{ route('dataset.index') }}" class="btn btn-secondary">
+                            Kembali
+                        </a>
                     </div>
 
-                    <div class="form-group">
-                        <label for="NTP">NTP</label>
-                        <input type="text" class="form-control" id="NTP" name="NTP" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="PPE">PPE</label>
-                        <input type="text" class="form-control" id="PPE" name="PPE" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="FPE">FPE</label>
-                        <input type="text" class="form-control" id="FPE" name="FPE" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="PSD">PSD</label>
-                        <input type="text" class="form-control" id="PSD" name="PSD" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="IPE">IPE</label>
-                        <input type="text" class="form-control" id="IPE" name="IPE" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="PKP">PKP</label>
-                        <input type="text" class="form-control" id="PKP" name="PKP" required>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Create Dataset</button>
-                    <a href="{{ route('dataset.index') }}" class="btn btn-secondary">Back</a>
                 </form>
             </div>
         </div>

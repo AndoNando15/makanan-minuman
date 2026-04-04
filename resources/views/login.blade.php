@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Sistem E-Wallet | Login</title>
+    <title>Sistem Makanan & Minuman | Login</title>
 
     <!-- Custom fonts for this template-->
     <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
@@ -52,13 +52,14 @@
                         <div class="row">
                             <div
                                 class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center bg-login-image">
-                                <img src="{{ asset('img/logo.jpeg') }}" alt="Logo" class="login-illustration">
+                                <img src="{{ asset('img/iftar_2918221.png') }}" alt="Logo"
+                                    class="login-illustration">
                             </div>
 
                             <div class="col-lg-6">
                                 <div class="p-5">
                                     <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
+                                        <h1 class="h4 text-gray-900 mb-4">Selamat Datang Kembali!</h1>
                                     </div>
                                     <form action="{{ route('loginForm') }}" method="post">
                                         @csrf

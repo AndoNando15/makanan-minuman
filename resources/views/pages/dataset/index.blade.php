@@ -13,8 +13,14 @@
                     <div>
                         <a href="{{ route('dataset.create') }}" class="btn btn-primary">Tambah Dataset</a>
 
-                        <!-- Import Dataset Button (Triggers Modal) -->
-                        <button class="btn btn-info" data-toggle="modal" data-target="#importModal">Import Dataset</button>
+                        <button class="btn btn-info" data-toggle="modal" data-target="#importModal">
+                            Import Dataset
+                        </button>
+
+                        <!-- DELETE ALL BUTTON -->
+                        <button class="btn btn-danger" data-toggle="modal" data-target="#deleteAllModal">
+                            Delete All
+                        </button>
                     </div>
 
                     <div>
@@ -248,6 +254,45 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Delete All -->
+    <div class="modal fade" id="deleteAllModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger">Konfirmasi Hapus Semua Data</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body text-center">
+                    <p class="mb-2">
+                        ⚠️ Semua data <strong>makanan & minuman</strong> akan dihapus!
+                    </p>
+                    <p class="text-danger font-weight-bold">
+                        Aksi ini tidak dapat dikembalikan.
+                    </p>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal">
+                        Batal
+                    </button>
+
+                    <form action="{{ route('dataset.deleteAll') }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">
+                            Ya, Hapus Semua
+                        </button>
+                    </form>
+                </div>
+
             </div>
         </div>
     </div>

@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Sistem E-Wallet</title>
+    <title>Sistem Makanan & Minuman</title>
 
     <!-- Custom fonts for this template-->
     <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
@@ -78,10 +78,7 @@
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/dashboard">
-                {{-- <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
-                </div> --}}
-                <div class="sidebar-brand-text mx-3">📅 Kamin</div>
+                <div class="sidebar-brand-text mx-3">🍽️☕ MAKMIN</div>
             </a>
 
             <!-- Divider -->
@@ -363,7 +360,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Sistem E-Wallet 2025</span>
+                        <span>Copyright &copy; Sistem Makanan & Minuman 2026</span>
                     </div>
                 </div>
             </footer>

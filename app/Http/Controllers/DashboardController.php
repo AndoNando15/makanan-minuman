@@ -7,11 +7,20 @@ class DashboardController extends Controller
 
     public function index()
     {
-        // Hitung total dataset
+        // Total semua dataset
         $totalDataset = Dataset::count();
 
-        return view('pages.dashboard.index', compact('totalDataset'));
+        // Total makanan
+        $totalMakanan = Dataset::whereRaw('LOWER(kategori_barang) = ?', ['makanan'])->count();
 
+        // Total minuman
+        $totalMinuman = Dataset::whereRaw('LOWER(kategori_barang) = ?', ['minuman'])->count();
+
+        return view('pages.dashboard.index', compact(
+            'totalDataset',
+            'totalMakanan',
+            'totalMinuman'
+        ));
     }
 
 }

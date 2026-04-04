@@ -150,7 +150,13 @@ class DatasetController extends Controller
             ];
         });
     }
+    public function deleteAll()
+    {
+        Dataset::truncate(); // hapus semua data
+        return redirect()->route('dataset.index')->with('success', 'Semua data berhasil dihapus!');
 
+
+    }
     private function hitungMinMax($value, $min, $max)
     {
         if ($max == $min) {

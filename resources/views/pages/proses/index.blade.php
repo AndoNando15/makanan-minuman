@@ -23,25 +23,72 @@
 
             <div class="card-body">
 
-                {{-- Kartu total dataset --}}
-                <div class="col-xl-3 col-md-6 mb-4 p-0">
-                    <div class="card border-left-primary shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                        Total Dataset
+                <div class="row">
+
+                    {{-- Kartu total dataset --}}
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Total Dataset
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            {{ $totalDataset ?? 0 }}
+                                        </div>
                                     </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalDataset ?? 0 }}</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-database fa-2x text-gray-300"></i>
+                                    <div class="col-auto">
+                                        <i class="fas fa-database fa-2x text-gray-300"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
+                    {{-- Kartu Makanan --}}
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-success shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                            Total Makanan
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            {{ $totalMakanan ?? 0 }}
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-utensils fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Kartu Minuman --}}
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-info shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                            Total Minuman
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            {{ $totalMinuman ?? 0 }}
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-coffee fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
                 @php
                     $selectedMakananIds = !empty($hasilMakanan['selectedDatasets'])
                         ? collect($hasilMakanan['selectedDatasets'])->pluck('id')->toArray()
@@ -73,35 +120,79 @@
 
                     @foreach ([2, 3, 4, 5] as $n)
                         <div id="block-{{ $n }}" class="cluster-block" style="display:none">
-                            <h5 class="mt-3">Centroid Awal Makanan</h5>
-                            @for ($i = 0; $i < $n; $i++)
-                                <label class="mt-2">Select Dataset Makanan {{ $i + 1 }}</label>
-                                <select name="dataset_makanan_id[]" class="form-control cluster-{{ $n }}"
-                                    disabled required>
-                                    <option value="">Select Dataset Makanan {{ $i + 1 }}</option>
-                                    @foreach ($allDatasetsMakanan as $d)
-                                        <option value="{{ $d->id }}"
-                                            {{ isset($selectedMakananIds[$i]) && $selectedMakananIds[$i] == $d->id ? 'selected' : '' }}>
-                                            {{ $d->kode }} - {{ $d->produk }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            @endfor
+                            <div class="row">
 
-                            <h5 class="mt-4">Centroid Awal Minuman</h5>
-                            @for ($i = 0; $i < $n; $i++)
-                                <label class="mt-2">Select Dataset Minuman {{ $i + 1 }}</label>
-                                <select name="dataset_minuman_id[]" class="form-control cluster-{{ $n }}"
-                                    disabled required>
-                                    <option value="">Select Dataset Minuman {{ $i + 1 }}</option>
-                                    @foreach ($allDatasetsMinuman as $d)
-                                        <option value="{{ $d->id }}"
-                                            {{ isset($selectedMinumanIds[$i]) && $selectedMinumanIds[$i] == $d->id ? 'selected' : '' }}>
-                                            {{ $d->kode }} - {{ $d->produk }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            @endfor
+                                {{-- KOLOM MAKANAN --}}
+                                <div class="col-md-6">
+                                    <div class="card shadow-sm border-left-success mb-3">
+                                        <div class="card-body">
+                                            <h5 class="text-success font-weight-bold">
+                                                Centroid Awal - Kategori Makanan
+                                            </h5>
+
+
+
+                                            @for ($i = 0; $i < $n; $i++)
+                                                <div class="form-group">
+                                                    <label class="font-weight-bold">
+                                                        Dataset Makanan {{ $i + 1 }}
+                                                    </label>
+
+                                                    <select name="dataset_makanan_id[]"
+                                                        class="form-control cluster-{{ $n }}" disabled required>
+                                                        <option value="">-- Pilih Dataset Makanan {{ $i + 1 }}
+                                                            --</option>
+
+                                                        @foreach ($allDatasetsMakanan as $d)
+                                                            <option value="{{ $d->id }}"
+                                                                {{ isset($selectedMakananIds[$i]) && $selectedMakananIds[$i] == $d->id ? 'selected' : '' }}>
+                                                                {{ $d->kode }} - {{ $d->produk }}
+                                                            </option>
+                                                        @endforeach
+
+                                                    </select>
+                                                </div>
+                                            @endfor
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- KOLOM MINUMAN --}}
+                                <div class="col-md-6">
+                                    <div class="card shadow-sm border-left-info mb-3">
+                                        <div class="card-body">
+                                            <h5 class="text-info font-weight-bold">
+                                                Centroid Awal - Kategori Minuman
+                                            </h5>
+
+
+
+                                            @for ($i = 0; $i < $n; $i++)
+                                                <div class="form-group">
+                                                    <label class="font-weight-bold">
+                                                        Dataset Minuman {{ $i + 1 }}
+                                                    </label>
+
+                                                    <select name="dataset_minuman_id[]"
+                                                        class="form-control cluster-{{ $n }}" disabled required>
+                                                        <option value="">-- Pilih Dataset Minuman {{ $i + 1 }}
+                                                            --</option>
+
+                                                        @foreach ($allDatasetsMinuman as $d)
+                                                            <option value="{{ $d->id }}"
+                                                                {{ isset($selectedMinumanIds[$i]) && $selectedMinumanIds[$i] == $d->id ? 'selected' : '' }}>
+                                                                {{ $d->kode }} - {{ $d->produk }}
+                                                            </option>
+                                                        @endforeach
+
+                                                    </select>
+                                                </div>
+                                            @endfor
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
                     @endforeach
 
@@ -134,17 +225,25 @@
 
                 @if ($hasResults)
                     <div class="mt-5">
-                        <ul class="nav nav-tabs" id="hasilTab" role="tablist">
+                        <ul class="nav nav-tabs mb-3" id="hasilTab" role="tablist">
                             @foreach ($sections as $index => $section)
                                 @php
                                     $isActive = $index === 0 ? 'active' : '';
                                     $isSelected = $index === 0 ? 'true' : 'false';
                                 @endphp
+
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link {{ $isActive }}" id="{{ $section['tabBtnId'] }}"
-                                        data-toggle="tab" href="#{{ $section['tabId'] }}" role="tab"
-                                        aria-controls="{{ $section['tabId'] }}" aria-selected="{{ $isSelected }}">
-                                        {{ $section['title'] }}
+                                    <a class="nav-link {{ $isActive }} d-flex align-items-center"
+                                        id="{{ $section['tabBtnId'] }}" data-toggle="tab" href="#{{ $section['tabId'] }}"
+                                        role="tab" aria-controls="{{ $section['tabId'] }}"
+                                        aria-selected="{{ $isSelected }}">
+
+                                        <i class="fas fa-layer-group mr-2"></i>
+
+                                        <span class="font-weight-bold">
+                                            {{ $section['title'] }}
+                                        </span>
+
                                     </a>
                                 </li>
                             @endforeach
@@ -162,8 +261,16 @@
 
                                     @if (!empty($hasil) && !empty($hasil['selectedDatasets']))
                                         <div class="card shadow-sm mt-4">
-                                            <div class="card-header bg-light">
-                                                <h4 class="mb-0 text-primary">{{ $section['title'] }}</h4>
+                                            <div class="card-header bg-light text-center">
+                                                <i class="fas fa-utensils text-primary mb-2"></i>
+
+                                                <h4 class="mb-1 text-primary font-weight-bold">
+                                                    {{ $section['title'] }}
+                                                </h4>
+
+                                                {{-- <small class="text-muted d-block">
+                                                    Data kategori makanan yang sedang dianalisis
+                                                </small> --}}
                                             </div>
 
                                             <div class="card-body">
@@ -596,7 +703,7 @@
                                                                 </div>
                                                             @endif
 
-                                                            @if (!empty($hasil['silhouetteTable']))
+                                                            {{-- @if (!empty($hasil['silhouetteTable']))
                                                                 @php
                                                                     $group = collect(
                                                                         $hasil['silhouetteTable'],
@@ -693,7 +800,7 @@
 
                                                                     </div>
                                                                 </div>
-                                                            @endif
+                                                            @endif --}}
 
                                                             {{-- Scatter --}}
                                                             @if (!empty($hasil['clusterScatterDatasets']) && !empty($hasil['centroidScatter']))
@@ -752,6 +859,19 @@
     #clusterScatterChartMinuman {
         width: 100%;
         height: 400px;
+    }
+
+    .nav-tabs .nav-link {
+        color: #6c757d;
+        /* abu default */
+        font-weight: 500;
+    }
+
+    .nav-tabs .nav-link.active {
+        color: #4e73df !important;
+        /* biru */
+        background-color: #fff;
+        border-color: #dddfeb #dddfeb #fff;
     }
 </style>
 

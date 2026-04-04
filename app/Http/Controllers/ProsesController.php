@@ -12,6 +12,9 @@ class ProsesController extends Controller
     {
         $totalDataset = Dataset::count();
 
+        $totalMakanan = Dataset::whereRaw('LOWER(kategori_barang) = ?', ['makanan'])->count();
+        $totalMinuman = Dataset::whereRaw('LOWER(kategori_barang) = ?', ['minuman'])->count();
+
         $allDatasetsMakanan = $this->orderedDatasetQuery()
             ->whereRaw('LOWER(kategori_barang) = ?', ['makanan'])
             ->select('id', 'kode', 'produk')
@@ -24,6 +27,8 @@ class ProsesController extends Controller
 
         return view('pages.proses.index', [
             'totalDataset' => $totalDataset,
+            'totalMakanan' => $totalMakanan,
+            'totalMinuman' => $totalMinuman,
             'allDatasetsMakanan' => $allDatasetsMakanan,
             'allDatasetsMinuman' => $allDatasetsMinuman,
             'selectedCluster' => null,
@@ -77,6 +82,8 @@ class ProsesController extends Controller
             ->whereRaw('LOWER(kategori_barang) = ?', ['minuman'])
             ->select('id', 'kode', 'produk')
             ->get();
+
+
 
         return view('pages.proses.index', [
             'totalDataset' => $totalDataset,
