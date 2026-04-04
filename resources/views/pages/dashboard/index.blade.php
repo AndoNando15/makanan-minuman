@@ -44,10 +44,10 @@
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
                         <h6 class="m-0 font-weight-bold text-primary">
-                            Penjelasan Singkat Metode K-Means Clustering
+                            KAK OX RABI KAPAN?
                         </h6>
                     </div>
-                    <div class="card-body">
+                    {{-- <div class="card-body">
                         <p>
                             Aplikasi ini menggunakan <strong>metode K-Means Clustering</strong> untuk
                             mengelompokkan platform e-wallet berdasarkan beberapa variabel penilaian,
@@ -91,7 +91,7 @@
                             biasanya menunjukkan bahwa pembentukan cluster semakin baik, yaitu data dalam satu cluster
                             cenderung mirip dan antar cluster semakin berbeda.
                         </p>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>
