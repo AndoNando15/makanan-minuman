@@ -596,7 +596,104 @@
                                                                 </div>
                                                             @endif
 
+                                                            @if (!empty($hasil['silhouetteTable']))
+                                                                @php
+                                                                    $group = collect(
+                                                                        $hasil['silhouetteTable'],
+                                                                    )->groupBy('cluster');
+                                                                    $k = $selectedCluster ?? 0;
+                                                                @endphp
 
+                                                                <div class="card mt-4 shadow-sm">
+                                                                    <div
+                                                                        class="card-header bg-info text-white text-center">
+                                                                        <h4>Silhouette Coefficient</h4>
+                                                                    </div>
+
+                                                                    <div class="card-body">
+
+                                                                        <div
+                                                                            class="d-flex justify-content-start align-items-center p-2 mb-5  border rounded bg-light">
+                                                                            <div>
+                                                                                <div class="font-weight-semibold mr-2">
+                                                                                    Average Overall:
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <span class="badge badge-primary">
+                                                                                {{ number_format($hasil['averageSilhouetteOverall'], 3) }}
+                                                                            </span>
+                                                                        </div>
+
+
+
+
+                                                                        <div class="table-responsive">
+                                                                            <table
+                                                                                class="table table-bordered table-sm text-center">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th rowspan="2">Cluster</th>
+                                                                                        <th rowspan="2">Kode</th>
+                                                                                        <th colspan="3">Data</th>
+                                                                                        <th rowspan="2">a(i)</th>
+                                                                                        @for ($i = 1; $i <= $k; $i++)
+                                                                                            <th rowspan="2">
+                                                                                                d(i,{{ $i }})
+                                                                                            </th>
+                                                                                        @endfor
+                                                                                        <th rowspan="2">b(i)</th>
+                                                                                        <th rowspan="2">S(i)</th>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <th>Harga</th>
+                                                                                        <th>Produk</th>
+                                                                                        <th>Penjualan</th>
+                                                                                    </tr>
+                                                                                </thead>
+
+                                                                                <tbody>
+                                                                                    @foreach ($group as $cluster => $items)
+                                                                                        @foreach ($items as $i => $row)
+                                                                                            <tr>
+                                                                                                @if ($i == 0)
+                                                                                                    <td
+                                                                                                        rowspan="{{ count($items) }}">
+                                                                                                        C{{ $cluster }}
+                                                                                                    </td>
+                                                                                                @endif
+
+                                                                                                <td>{{ $row['kode'] }}
+                                                                                                </td>
+                                                                                                <td>{{ number_format($row['harga'], 3) }}
+                                                                                                </td>
+                                                                                                <td>{{ number_format($row['total_product'], 3) }}
+                                                                                                </td>
+                                                                                                <td>{{ number_format($row['total_penjualan'], 3) }}
+                                                                                                </td>
+                                                                                                <td>{{ number_format($row['a'], 6) }}
+                                                                                                </td>
+
+                                                                                                @for ($i = 1; $i <= $k; $i++)
+                                                                                                    <td>
+                                                                                                        {{ $row['d'][$i] === null ? '-' : number_format($row['d'][$i], 6) }}
+                                                                                                    </td>
+                                                                                                @endfor
+
+                                                                                                <td>{{ number_format($row['b'], 6) }}
+                                                                                                </td>
+                                                                                                <td>{{ number_format($row['s'], 6) }}
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        @endforeach
+                                                                                    @endforeach
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+                                                            @endif
 
                                                             {{-- Scatter --}}
                                                             @if (!empty($hasil['clusterScatterDatasets']) && !empty($hasil['centroidScatter']))

@@ -443,7 +443,7 @@ class ProsesController extends Controller
         }, $centroids));
 
         $dbiPerCentroid = $this->calculateDBIPerCentroid($finalCentroids);
-        $silhouette = $this->calculateSilhouette($points, $X, $clustersIds, $features);
+        $silhouette = $this->calculateSilhouetteDetailed($points, $X, $clustersIds, $features);
         return [
             'kategori' => $kategori,
             'selectedDatasets' => $selectedDatasets,
@@ -470,12 +470,145 @@ class ProsesController extends Controller
             'totalSSE' => $totalSSE,
             'iterationsUsed' => $iterationsUsed,
             'minMax' => $minMax,
-            'silhouetteDetails' => $silhouette['details'],
-            'averageSilhouettePerCluster' => $silhouette['perCluster'],
-            'averageSilhouetteOverall' => $silhouette['overall'],
+            'silhouetteTable' => $silhouette['rows'] ?? [],
+            'averageSilhouettePerCluster' => $silhouette['perCluster'] ?? [],
+            'averageSilhouetteOverall' => $silhouette['overall'] ?? 0,
         ];
     }
+    private function calculateSilhouetteDetailed($points, array $X, array $clustersIds, array $features): array
+    {
+        $clusterMap = [];
 
+        foreach ($clustersIds as $idx => $members) {
+            foreach ($members as $pid) {
+                $clusterMap[$pid] = $idx + 1;
+            }
+        }
+
+        $rows = [];
+        $clusterSums = [];
+        $clusterCounts = [];
+        $overallSum = 0;
+        $overallCount = 0;
+
+        foreach ($points as $p) {
+            $pid = $p->id;
+            $ownCluster = $clusterMap[$pid] ?? 1;
+            $ownIndex = $ownCluster - 1;
+            $ownMembers = $clustersIds[$ownIndex] ?? [];
+
+            // a(i)
+            if (count($ownMembers) <= 1) {
+                $a = 0;
+            } else {
+                $sumA = 0;
+                $countA = 0;
+
+                foreach ($ownMembers as $m) {
+                    if ($m == $pid)
+                        continue;
+                    $sumA += $this->euclideanVec($X[$pid], $X[$m], $features);
+                    $countA++;
+                }
+
+                $a = $countA ? $sumA / $countA : 0;
+            }
+
+            // d(i,j) & b(i)
+            $distances = [];
+            $b = INF;
+
+            foreach ($clustersIds as $idx => $members) {
+                $clusterNo = $idx + 1;
+
+                if ($idx == $ownIndex || empty($members)) {
+                    $distances[$clusterNo] = null;
+                    continue;
+                }
+
+                $sumD = 0;
+                $countD = 0;
+
+                foreach ($members as $m) {
+                    $sumD += $this->euclideanVec($X[$pid], $X[$m], $features);
+                    $countD++;
+                }
+
+                $avg = $countD ? $sumD / $countD : null;
+                $distances[$clusterNo] = $avg;
+
+                if ($avg !== null && $avg < $b) {
+                    $b = $avg;
+                }
+            }
+
+            if ($b === INF)
+                $b = 0;
+
+            // S(i)
+            $den = max($a, $b);
+            $s = $den > 0 ? ($b - $a) / $den : 0;
+
+            $rows[] = [
+                'cluster' => $ownCluster,
+                'kode' => $p->kode,
+                'produk' => $p->produk,
+                'harga' => $X[$pid]['harga'] ?? 0,
+                'total_product' => $X[$pid]['total_product'] ?? 0,
+                'total_penjualan' => $X[$pid]['total_penjualan'] ?? 0,
+                'a' => $a,
+                'd' => $distances,
+                'b' => $b,
+                's' => $s,
+            ];
+
+            $clusterSums[$ownCluster] = ($clusterSums[$ownCluster] ?? 0) + $s;
+            $clusterCounts[$ownCluster] = ($clusterCounts[$ownCluster] ?? 0) + 1;
+
+            $overallSum += $s;
+            $overallCount++;
+        }
+
+        // SORT
+        usort($rows, function ($a, $b) {
+            if ($a['cluster'] != $b['cluster']) {
+                return $a['cluster'] <=> $b['cluster'];
+            }
+
+            preg_match('/^([A-Za-z]+)(\d+)$/', $a['kode'], $matchA);
+            preg_match('/^([A-Za-z]+)(\d+)$/', $b['kode'], $matchB);
+
+            $prefixA = $matchA[1] ?? $a['kode'];
+            $numberA = isset($matchA[2]) ? (int) $matchA[2] : 0;
+
+            $prefixB = $matchB[1] ?? $b['kode'];
+            $numberB = isset($matchB[2]) ? (int) $matchB[2] : 0;
+
+            if ($prefixA !== $prefixB) {
+                return strcmp($prefixA, $prefixB);
+            }
+
+            return $numberA <=> $numberB;
+        });
+
+        // AVG PER CLUSTER
+        $perCluster = [];
+        foreach ($clusterSums as $c => $sum) {
+            $perCluster[] = [
+                'cluster' => $c,
+                'average' => $clusterCounts[$c] ? $sum / $clusterCounts[$c] : 0,
+                'count' => $clusterCounts[$c],
+            ];
+        }
+
+        $overall = $overallCount ? $overallSum / $overallCount : 0;
+
+        return [
+            'rows' => $rows,
+            'perCluster' => $perCluster,
+            'overall' => $overall,
+        ];
+    }
     private function emptyKMeansResult(array $features): array
     {
         return [
@@ -503,7 +636,7 @@ class ProsesController extends Controller
             'totalSSE' => 0,
             'iterationsUsed' => 0,
             'minMax' => [],
-            'silhouetteDetails' => [],
+            'silhouetteTable' => [],
             'averageSilhouettePerCluster' => [],
             'averageSilhouetteOverall' => 0,
         ];
