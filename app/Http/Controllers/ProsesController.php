@@ -46,56 +46,45 @@ class ProsesController extends Controller
     {
         $request->validate([
             'cluster' => 'required|in:2,3,4,5',
-
-            'dataset_makanan_id' => 'required|array|size:' . $request->cluster,
-            'dataset_makanan_id.*' => 'integer|distinct|exists:dataset,id',
-
-            'dataset_minuman_id' => 'required|array|size:' . $request->cluster,
-            'dataset_minuman_id.*' => 'integer|distinct|exists:dataset,id',
         ]);
 
         $k = (int) $request->cluster;
         $features = ['harga', 'total_product', 'total_penjualan'];
 
+        $totalMakanan = Dataset::whereRaw('LOWER(kategori_barang) = ?', ['makanan'])->count();
+        $totalMinuman = Dataset::whereRaw('LOWER(kategori_barang) = ?', ['minuman'])->count();
+
+        if ($k > $totalMakanan || $k > $totalMinuman) {
+            throw ValidationException::withMessages([
+                'cluster' => ['Jumlah cluster tidak boleh lebih besar dari jumlah data kategori makanan atau minuman.'],
+            ]);
+        }
+
         $hasilMakanan = $this->runKMeansPerCategory(
             'makanan',
-            $request->dataset_makanan_id,
             $k,
             $features
         );
 
         $hasilMinuman = $this->runKMeansPerCategory(
             'minuman',
-            $request->dataset_minuman_id,
             $k,
             $features
         );
 
         $totalDataset = Dataset::count();
 
-        $allDatasetsMakanan = $this->orderedDatasetQuery()
-            ->whereRaw('LOWER(kategori_barang) = ?', ['makanan'])
-            ->select('id', 'kode', 'produk')
-            ->get();
-
-        $allDatasetsMinuman = $this->orderedDatasetQuery()
-            ->whereRaw('LOWER(kategori_barang) = ?', ['minuman'])
-            ->select('id', 'kode', 'produk')
-            ->get();
-
-
-
         return view('pages.proses.index', [
             'totalDataset' => $totalDataset,
-            'allDatasetsMakanan' => $allDatasetsMakanan,
-            'allDatasetsMinuman' => $allDatasetsMinuman,
+            'totalMakanan' => $totalMakanan,
+            'totalMinuman' => $totalMinuman,
             'selectedCluster' => $k,
             'hasilMakanan' => $hasilMakanan,
             'hasilMinuman' => $hasilMinuman,
         ]);
     }
 
-    private function runKMeansPerCategory(string $kategori, array $selectedIds, int $k, array $features): array
+    private function runKMeansPerCategory(string $kategori, int $k, array $features): array
     {
         $kategori = strtolower($kategori);
 
@@ -107,19 +96,32 @@ class ProsesController extends Controller
             return $this->emptyKMeansResult($features);
         }
 
-        $selectedDatasets = $this->orderedDatasetQuery()
-            ->whereRaw('LOWER(kategori_barang) = ?', [$kategori])
-            ->whereIn('id', $selectedIds)
-            ->get()
-            ->sortBy(function ($item) use ($selectedIds) {
-                return array_search($item->id, $selectedIds);
-            })
-            ->values();
-
-        if ($selectedDatasets->count() !== $k) {
+        if ($points->count() < $k) {
             throw ValidationException::withMessages([
-                'cluster' => ['Centroid awal untuk kategori ' . ucfirst($kategori) . ' tidak valid.'],
+                'cluster' => ['Jumlah cluster tidak boleh lebih besar dari jumlah data kategori ' . ucfirst($kategori) . '.'],
             ]);
+        }
+
+        $sortedBySales = $points->sortByDesc('total_penjualan')->values();
+        $selectedIndices = $this->calculateInitialCentroidIndices($sortedBySales->count(), $k);
+
+        $selectedIds = [];
+        foreach ($selectedIndices as $index) {
+            $selectedIds[] = $sortedBySales[$index]->id;
+        }
+
+        $selectedDatasetsRaw = [];
+        foreach ($selectedIds as $id) {
+            $item = $sortedBySales->firstWhere('id', $id);
+            $selectedDatasetsRaw[] = [
+                'id' => $item->id,
+                'kode' => $item->kode,
+                'produk' => $item->produk,
+                'kategori_barang' => $item->kategori_barang,
+                'harga' => (float) $item->harga,
+                'total_product' => (float) $item->total_product,
+                'total_penjualan' => (float) $item->total_penjualan,
+            ];
         }
 
         $minMax = [];
@@ -153,17 +155,18 @@ class ProsesController extends Controller
         foreach ($selectedIds as $id) {
             $centroids[] = $X[$id];
         }
-        $normalizedSelectedDatasets = [];
 
-        foreach ($selectedDatasets as $item) {
+        $normalizedSelectedDatasets = [];
+        foreach ($selectedIds as $id) {
+            $item = $sortedBySales->firstWhere('id', $id);
             $normalizedSelectedDatasets[] = [
-                'id' => $item->id,
+                'id' => $id,
                 'kode' => $item->kode,
                 'produk' => $item->produk,
                 'kategori_barang' => $item->kategori_barang,
-                'harga' => $X[$item->id]['harga'] ?? 0,
-                'total_product' => $X[$item->id]['total_product'] ?? 0,
-                'total_penjualan' => $X[$item->id]['total_penjualan'] ?? 0,
+                'harga' => $X[$id]['harga'] ?? 0,
+                'total_product' => $X[$id]['total_product'] ?? 0,
+                'total_penjualan' => $X[$id]['total_penjualan'] ?? 0,
             ];
         }
         $maxIterations = 100;
@@ -453,7 +456,7 @@ class ProsesController extends Controller
         $silhouette = $this->calculateSilhouetteDetailed($points, $X, $clustersIds, $features);
         return [
             'kategori' => $kategori,
-            'selectedDatasets' => $selectedDatasets,
+            'selectedDatasets' => $selectedDatasetsRaw,
             'distanceTable' => $distanceTable,
             'normalizedSelectedDatasets' => $normalizedSelectedDatasets,
             'features' => $features,
@@ -482,6 +485,20 @@ class ProsesController extends Controller
             'averageSilhouetteOverall' => $silhouette['overall'] ?? 0,
         ];
     }
+    private function calculateInitialCentroidIndices(int $count, int $k): array
+    {
+        if ($k <= 1) {
+            return $count > 0 ? [0] : [];
+        }
+
+        $indices = [];
+        for ($i = 0; $i < $k; $i++) {
+            $indices[] = (int) floor($i * ($count - 1) / ($k - 1));
+        }
+
+        return array_values(array_unique($indices));
+    }
+
     private function calculateSilhouetteDetailed($points, array $X, array $clustersIds, array $features): array
     {
         $clusterMap = [];

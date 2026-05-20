@@ -89,17 +89,6 @@
                     </div>
 
                 </div>
-                @php
-                    $selectedMakananIds = !empty($hasilMakanan['selectedDatasets'])
-                        ? collect($hasilMakanan['selectedDatasets'])->pluck('id')->toArray()
-                        : [];
-
-                    $selectedMinumanIds = !empty($hasilMinuman['selectedDatasets'])
-                        ? collect($hasilMinuman['selectedDatasets'])->pluck('id')->toArray()
-                        : [];
-                @endphp
-
-                {{-- Form pilih cluster dan centroid awal --}}
                 <form action="{{ route('proses.cluster') }}" method="POST" id="kmeansForm">
                     @csrf
 
@@ -118,83 +107,10 @@
                         </select>
                     </div>
 
-                    @foreach ([2, 3, 4, 5] as $n)
-                        <div id="block-{{ $n }}" class="cluster-block" style="display:none">
-                            <div class="row">
-
-                                {{-- KOLOM MAKANAN --}}
-                                <div class="col-md-6">
-                                    <div class="card shadow-sm border-left-success mb-3">
-                                        <div class="card-body">
-                                            <h5 class="text-success font-weight-bold">
-                                                Centroid Awal - Kategori Makanan
-                                            </h5>
-
-
-
-                                            @for ($i = 0; $i < $n; $i++)
-                                                <div class="form-group">
-                                                    <label class="font-weight-bold">
-                                                        Dataset Makanan {{ $i + 1 }}
-                                                    </label>
-
-                                                    <select name="dataset_makanan_id[]"
-                                                        class="form-control cluster-{{ $n }}" disabled required>
-                                                        <option value="">-- Pilih Dataset Makanan {{ $i + 1 }}
-                                                            --</option>
-
-                                                        @foreach ($allDatasetsMakanan as $d)
-                                                            <option value="{{ $d->id }}"
-                                                                {{ isset($selectedMakananIds[$i]) && $selectedMakananIds[$i] == $d->id ? 'selected' : '' }}>
-                                                                {{ $d->kode }} - {{ $d->produk }}
-                                                            </option>
-                                                        @endforeach
-
-                                                    </select>
-                                                </div>
-                                            @endfor
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {{-- KOLOM MINUMAN --}}
-                                <div class="col-md-6">
-                                    <div class="card shadow-sm border-left-info mb-3">
-                                        <div class="card-body">
-                                            <h5 class="text-info font-weight-bold">
-                                                Centroid Awal - Kategori Minuman
-                                            </h5>
-
-
-
-                                            @for ($i = 0; $i < $n; $i++)
-                                                <div class="form-group">
-                                                    <label class="font-weight-bold">
-                                                        Dataset Minuman {{ $i + 1 }}
-                                                    </label>
-
-                                                    <select name="dataset_minuman_id[]"
-                                                        class="form-control cluster-{{ $n }}" disabled required>
-                                                        <option value="">-- Pilih Dataset Minuman {{ $i + 1 }}
-                                                            --</option>
-
-                                                        @foreach ($allDatasetsMinuman as $d)
-                                                            <option value="{{ $d->id }}"
-                                                                {{ isset($selectedMinumanIds[$i]) && $selectedMinumanIds[$i] == $d->id ? 'selected' : '' }}>
-                                                                {{ $d->kode }} - {{ $d->produk }}
-                                                            </option>
-                                                        @endforeach
-
-                                                    </select>
-                                                </div>
-                                            @endfor
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    @endforeach
+                    <div class="alert alert-info small">
+                        Centroid awal akan dipilih otomatis berdasarkan urutan total penjualan dari tertinggi ke terendah.
+                        .
+                    </div>
 
                     <button type="submit" class="btn btn-primary mt-3">Proses</button>
                 </form>
@@ -277,7 +193,11 @@
 
                                                 {{-- Tabel hasil pilihan --}}
                                                 <div class="mt-2">
-                                                    <h5 class="mb-3">Hasil Pilihan Dataset (Centroid Awal)</h5>
+                                                    <h5 class="mb-3">Hasil Centroid Awal Otomatis</h5>
+                                                    <p class="text-muted small mb-3">
+                                                        Centroid awal dipilih berdasarkan urutan total penjualan dari
+                                                        tertinggi ke terendah.
+                                                    </p>
                                                     <table class="table table-bordered">
                                                         <thead>
                                                             <tr>
@@ -292,7 +212,7 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            @foreach ($hasil['normalizedSelectedDatasets'] as $row)
+                                                            @foreach ($hasil['selectedDatasets'] as $row)
                                                                 <tr>
                                                                     <td class="text-center">{{ $loop->iteration }}</td>
                                                                     <td class="text-center">{{ $row['id'] }}</td>
@@ -658,8 +578,8 @@
                                                                             <div class="card shadow-sm">
                                                                                 <div class="card-header">
                                                                                     <h5 class="mb-0">
-                                                                                        Cluster {{ $clusterNumber }}:
-                                                                                        {{ $hasil['clusterLabel'][$clusterName] ?? 'Tidak Ada Label' }}
+                                                                                        Cluster {{ $clusterNumber }}
+                                                                                        {{-- {{ $hasil['clusterLabel'][$clusterName] ?? 'Tidak Ada Label' }} --}}
                                                                                     </h5>
                                                                                 </div>
 
@@ -703,7 +623,7 @@
                                                                 </div>
                                                             @endif
 
-                                                            {{-- @if (!empty($hasil['silhouetteTable']))
+                                                            @if (!empty($hasil['silhouetteTable']))
                                                                 @php
                                                                     $group = collect(
                                                                         $hasil['silhouetteTable'],
@@ -800,7 +720,7 @@
 
                                                                     </div>
                                                                 </div>
-                                                            @endif --}}
+                                                            @endif
 
                                                             {{-- Scatter --}}
                                                             @if (!empty($hasil['clusterScatterDatasets']) && !empty($hasil['centroidScatter']))
