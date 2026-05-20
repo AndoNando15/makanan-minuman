@@ -78,7 +78,7 @@
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/dashboard">
-                <div class="sidebar-brand-text mx-3">🍽️☕ MAKMIN</div>
+                <div class="sidebar-brand-text mx-3">MBLEDEQ</div>
             </a>
 
             <!-- Divider -->
