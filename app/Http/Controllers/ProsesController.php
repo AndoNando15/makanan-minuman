@@ -8,6 +8,11 @@ use Illuminate\Validation\ValidationException;
 
 class ProsesController extends Controller
 {
+    /**
+     * Tampilkan halaman utama proses clustering dengan ringkasan kategori.
+     *
+     * @return \Illuminate\View\View
+     */
     public function index()
     {
         $totalDataset = Dataset::count();
@@ -37,11 +42,23 @@ class ProsesController extends Controller
         ]);
     }
 
+    /**
+     * Arahkan ulang permintaan show kembali ke halaman proses utama.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function show($id)
     {
         return redirect()->route('proses.index');
     }
 
+    /**
+     * Jalankan proses clustering untuk jumlah cluster yang dipilih.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\View\View
+     */
     public function process(Request $request)
     {
         $request->validate([
@@ -84,9 +101,16 @@ class ProsesController extends Controller
         ]);
     }
 
+    /**
+     * Jalankan algoritma K-Means untuk kategori tertentu.
+     *
+     * @param  string  $kategori
+     * @param  int  $k
+     * @param  array  $features
+     * @return array
+     */
     private function runKMeansPerCategory(string $kategori, int $k, array $features): array
     {
-        $kategori = strtolower($kategori);
 
         $points = $this->orderedDatasetQuery()
             ->whereRaw('LOWER(kategori_barang) = ?', [$kategori])
@@ -485,6 +509,13 @@ class ProsesController extends Controller
             'averageSilhouetteOverall' => $silhouette['overall'] ?? 0,
         ];
     }
+    /**
+     * Hitung posisi centroid awal untuk seleksi K-Means.
+     *
+     * @param  int  $count
+     * @param  int  $k
+     * @return array
+     */
     private function calculateInitialCentroidIndices(int $count, int $k): array
     {
         if ($k <= 1) {
@@ -499,9 +530,17 @@ class ProsesController extends Controller
         return array_values(array_unique($indices));
     }
 
+    /**
+     * Hitung skor silhouette rinci untuk kualitas clustering.
+     *
+     * @param  \Illuminate\Support\Collection  $points
+     * @param  array  $X
+     * @param  array  $clustersIds
+     * @param  array  $features
+     * @return array
+     */
     private function calculateSilhouetteDetailed($points, array $X, array $clustersIds, array $features): array
     {
-        $clusterMap = [];
 
         foreach ($clustersIds as $idx => $members) {
             foreach ($members as $pid) {
@@ -633,6 +672,12 @@ class ProsesController extends Controller
             'overall' => $overall,
         ];
     }
+    /**
+     * Kembalikan struktur hasil K-Means kosong ketika tidak ada data.
+     *
+     * @param  array  $features
+     * @return array
+     */
     private function emptyKMeansResult(array $features): array
     {
         return [
@@ -666,6 +711,11 @@ class ProsesController extends Controller
         ];
     }
 
+    /**
+     * Bangun query dasar dataset yang diurutkan berdasarkan kode.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
     private function orderedDatasetQuery()
     {
         return Dataset::query()
@@ -673,6 +723,14 @@ class ProsesController extends Controller
             ->orderByRaw('CAST(SUBSTRING(kode, 2) AS UNSIGNED) ASC');
     }
 
+    /**
+     * Normalisasi nilai numerik menggunakan skala min-max.
+     *
+     * @param  float|int  $value
+     * @param  float|int  $min
+     * @param  float|int  $max
+     * @return float
+     */
     private function minMaxNormalize($value, $min, $max): float
     {
         if ($max == $min) {
@@ -682,6 +740,14 @@ class ProsesController extends Controller
         return ($value - $min) / ($max - $min);
     }
 
+    /**
+     * Hitung jarak Euclidean kuadrat antara dua vektor fitur.
+     *
+     * @param  array  $a
+     * @param  array  $b
+     * @param  array  $features
+     * @return float
+     */
     private function squaredEuclideanVec(array $a, array $b, array $features): float
     {
         $sum = 0.0;
@@ -695,11 +761,28 @@ class ProsesController extends Controller
 
         return $sum;
     }
+    /**
+     * Hitung jarak Euclidean antara dua vektor fitur.
+     *
+     * @param  array  $a
+     * @param  array  $b
+     * @param  array  $features
+     * @return float
+     */
     private function euclideanVec(array $a, array $b, array $features): float
     {
         return sqrt($this->squaredEuclideanVec($a, $b, $features));
     }
 
+    /**
+     * Hitung detail koefisien silhouette untuk data yang dikelompokkan.
+     *
+     * @param  \Illuminate\Support\Collection  $points
+     * @param  array  $X
+     * @param  array  $clustersIds
+     * @param  array  $features
+     * @return array
+     */
     private function calculateSilhouette($points, array $X, array $clustersIds, array $features): array
     {
         $clusterMap = [];
@@ -812,6 +895,12 @@ class ProsesController extends Controller
             'overall' => $overall,
         ];
     }
+    /**
+     * Hitung jarak DBI antar centroid.
+     *
+     * @param  array  $centroids
+     * @return array
+     */
     public function calculateDBIPerCentroid($centroids)
     {
         $result = [];

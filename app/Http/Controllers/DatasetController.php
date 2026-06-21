@@ -9,6 +9,11 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class DatasetController extends Controller
 {
+    /**
+     * Tampilkan halaman indeks dataset dengan nilai yang telah dinormalisasi.
+     *
+     * @return \Illuminate\View\View
+     */
     public function index()
     {
         $makanan = Dataset::whereRaw('LOWER(kategori_barang) = ?', ['makanan'])
@@ -32,11 +37,22 @@ class DatasetController extends Controller
         ));
     }
 
+    /**
+     * Tampilkan formulir untuk membuat dataset baru.
+     *
+     * @return \Illuminate\View\View
+     */
     public function create()
     {
         return view('pages.dataset.create');
     }
 
+    /**
+     * Simpan dataset baru ke dalam database.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -68,12 +84,25 @@ class DatasetController extends Controller
         return redirect()->route('dataset.index')->with('success', 'Dataset created successfully!');
     }
 
+    /**
+     * Tampilkan formulir untuk mengedit dataset yang dipilih.
+     *
+     * @param  int  $id
+     * @return \Illuminate\View\View
+     */
     public function edit($id)
     {
         $dataset = Dataset::findOrFail($id);
         return view('pages.dataset.edit', compact('dataset'));
     }
 
+    /**
+     * Perbarui dataset yang ditentukan di database.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -106,6 +135,12 @@ class DatasetController extends Controller
         return redirect()->route('dataset.index')->with('success', 'Dataset updated successfully!');
     }
 
+    /**
+     * Hapus dataset yang ditentukan dari penyimpanan.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function destroy($id)
     {
         $dataset = Dataset::findOrFail($id);
@@ -114,6 +149,12 @@ class DatasetController extends Controller
         return redirect()->route('dataset.index')->with('success', 'Dataset deleted successfully!');
     }
 
+    /**
+     * Impor dataset dari file Excel yang diunggah.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function import(Request $request)
     {
         $request->validate([
@@ -126,6 +167,12 @@ class DatasetController extends Controller
         return redirect()->route('dataset.index')->with('success', 'Dataset imported successfully!');
     }
 
+    /**
+     * Normalisasi nilai numerik dataset menggunakan skala min-max.
+     *
+     * @param  \Illuminate\Support\Collection  $data
+     * @return \Illuminate\Support\Collection
+     */
     private function normalisasiMinMax($data)
     {
         if ($data->isEmpty()) {
@@ -150,13 +197,26 @@ class DatasetController extends Controller
             ];
         });
     }
+
+    /**
+     * Hapus semua record dataset dari database.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function deleteAll()
     {
         Dataset::truncate(); // hapus semua data
         return redirect()->route('dataset.index')->with('success', 'Semua data berhasil dihapus!');
-
-
     }
+
+    /**
+     * Hitung nilai normalisasi min-max untuk input numerik.
+     *
+     * @param  float|int  $value
+     * @param  float|int  $min
+     * @param  float|int  $max
+     * @return float
+     */
     private function hitungMinMax($value, $min, $max)
     {
         if ($max == $min) {

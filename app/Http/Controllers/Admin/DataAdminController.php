@@ -8,71 +8,71 @@ use Illuminate\Http\Request;
 
 class DataAdminController extends Controller
 {
-    // Show list of users (Read)
+    // Tampilkan daftar pengguna (Baca)
     public function index()
     {
-        $users = User::all();  // Fetch all users from the database
+        $users = User::all();  // Ambil semua pengguna dari database
         return view('pages.data-admin.index', compact('users'));
     }
 
-    // Show the form for creating a new user (Create)
+    // Tampilkan formulir untuk membuat pengguna baru (Buat)
     public function create()
     {
         return view('pages.data-admin.create');
     }
 
-    // Store the newly created user in the database (Store)
+    // Simpan pengguna baru ke database (Simpan)
     public function store(Request $request)
     {
-        // Validate the data
+        // Validasi data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
         ]);
 
-        // Create the new user
+        // Buat pengguna baru
         User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => bcrypt($validatedData['password']),
         ]);
 
-        // Redirect with success message
+        // Arahkan ulang dengan pesan sukses
         return redirect()->route('data-admin.index')->with('success', 'User created successfully!');
     }
 
-    // Show the form for editing the specified user (Edit)
+    // Tampilkan formulir untuk mengedit pengguna yang dipilih (Edit)
     public function edit($id)
     {
-        $user = User::findOrFail($id);  // Find the user by ID
+        $user = User::findOrFail($id);  // Temukan pengguna berdasarkan ID
         return view('pages.data-admin.edit', compact('user'));
     }
 
-    // Update the specified user in the database (Update)
+    // Perbarui pengguna yang ditentukan di database (Update)
     public function update(Request $request, $id)
     {
-        // Validate the data
+        // Validasi data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,  // Allow the current email
-            'password' => 'nullable|string|min:6|confirmed',  // Optional password field
+            'email' => 'required|email|unique:users,email,' . $id,  // Izinkan email saat ini
+            'password' => 'nullable|string|min:6|confirmed',  // Field password opsional
         ]);
 
-        $user = User::findOrFail($id);  // Find the user by ID
+        $user = User::findOrFail($id);  // Temukan pengguna berdasarkan ID
 
-        // Update the user
+        // Perbarui pengguna
         $user->update([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
-            'password' => $request->filled('password') ? bcrypt($validatedData['password']) : $user->password,  // Update password if provided
+            'password' => $request->filled('password') ? bcrypt($validatedData['password']) : $user->password,  // Perbarui password jika ada
         ]);
 
-        // Redirect with success message
+        // Arahkan ulang dengan pesan sukses
         return redirect()->route('data-admin.index')->with('success', 'User updated successfully!');
     }
 
-    // Delete the specified user (Delete)
+    // Hapus pengguna yang ditentukan (Hapus)
     public function destroy($id)
     {
         $user = User::findOrFail($id);

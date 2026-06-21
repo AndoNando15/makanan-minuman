@@ -98,7 +98,7 @@
                             <option value="" disabled {{ empty($selectedCluster) ? 'selected' : '' }}>
                                 Select Cluster
                             </option>
-                            @foreach ([2, 3, 4, 5] as $k)
+                            @foreach ([3, 4, 5] as $k)
                                 <option value="{{ $k }}"
                                     {{ isset($selectedCluster) && $selectedCluster == $k ? 'selected' : '' }}>
                                     Cluster {{ $k }}
@@ -193,7 +193,7 @@
 
                                                 {{-- Tabel hasil pilihan --}}
                                                 <div class="mt-2">
-                                                    <h5 class="mb-3">Hasil Centroid Awal Otomatis</h5>
+                                                    <h5 class="mb-3">Hasil Centroid Awal</h5>
                                                     <p class="text-muted small mb-3">
                                                         Centroid awal dipilih berdasarkan urutan total penjualan dari
                                                         tertinggi ke terendah.
@@ -221,11 +221,11 @@
                                                                     <td class="text-center">{{ $row['kategori_barang'] }}
                                                                     </td>
                                                                     <td class="text-center">
-                                                                        {{ number_format($row['harga'], 3) }}</td>
+                                                                        {{ number_format($row['harga']) }}</td>
                                                                     <td class="text-center">
-                                                                        {{ number_format($row['total_product'], 3) }}</td>
+                                                                        {{ number_format($row['total_product']) }}</td>
                                                                     <td class="text-center">
-                                                                        {{ number_format($row['total_penjualan'], 3) }}
+                                                                        {{ number_format($row['total_penjualan']) }}
                                                                     </td>
                                                                 </tr>
                                                             @endforeach

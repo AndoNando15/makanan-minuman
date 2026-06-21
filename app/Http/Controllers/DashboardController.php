@@ -5,6 +5,11 @@ use App\Models\Dataset;
 class DashboardController extends Controller
 {
 
+    /**
+     * Tampilkan ringkasan dashboard dengan jumlah dataset.
+     *
+     * @return \Illuminate\View\View
+     */
     public function index()
     {
         // Total semua dataset

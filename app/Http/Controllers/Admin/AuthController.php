@@ -8,11 +8,23 @@ use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    function index()
+    /**
+     * Tampilkan halaman login.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function index()
     {
         return view('login');
     }
-    function loginForm(Request $request)
+
+    /**
+     * Proses form login dan autentikasi pengguna.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function loginForm(Request $request)
     {
         $data = $request->only('email', 'password');
         if (Auth::attempt($data)) {
@@ -23,7 +35,12 @@ class AuthController extends Controller
         }
     }
 
-    function logout()
+    /**
+     * Logout pengguna dan arahkan kembali ke halaman login.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function logout()
     {
         Auth::logout();
         return redirect('/');
