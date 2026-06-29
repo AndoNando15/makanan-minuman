@@ -337,7 +337,7 @@
                                                 @if (!empty($hasil['allIterations']) || !empty($hasil['allDistancesPerIteration']) || !empty($hasil['allClusterResultsPerIteration']))
     <div class="form-group mt-4 mb-3">
 <div class="form-group mt-4 mb-3">
-    <ul class="nav nav-tabs justify-content-center" id="iterationNav" role="tablist">
+    <ul class="nav nav-tabs justify-content-center" id="iterationNav-{{ $section['key'] }}" data-key="{{ $section['key'] }}" role="tablist">
         @foreach ($hasil['allIterations'] as $idx => $it)
             <li class="nav-item" role="presentation">
                 <a class="nav-link {{ $idx == 0 ? 'active' : '' }}" href="javascript:void(0);" data-index="{{ $idx }}">Iterasi {{ $idx + 1 }}</a>
@@ -348,7 +348,7 @@
     </div>
 
     @foreach ($hasil['allIterations'] as $iterationIndex => $iteration)
-        <div class="iteration-block" id="iteration-{{ $iterationIndex }}" style="{{ $iterationIndex === 0 ? '' : 'display:none;' }}">
+        <div class="iteration-block" id="iteration-{{ $section['key'] }}-{{ $iterationIndex }}" style="{{ $iterationIndex === 0 ? '' : 'display:none;' }}">
             <div class="mt-4">
                 <div class="mt-5">
                     <div class="text-center" style="background-color: #ecf7ff; border-radius: 8px;">
@@ -501,29 +501,34 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var nav = document.getElementById('iterationNav');
-            if (!nav) return;
-            nav.querySelectorAll('.nav-link').forEach(function (link) {
-                link.addEventListener('click', function () {
-                    var idx = this.dataset.index;
-                    // hide all blocks
-                    document.querySelectorAll('.iteration-block').forEach(function (el) {
+            // Attach click handler to each iteration nav
+            document.querySelectorAll('[id^=iterationNav]').forEach(function (nav) {
+                const key = nav.dataset.key;
+                if (!key) return;
+                nav.addEventListener('click', function (e) {
+                    const link = e.target.closest('.nav-link');
+                    if (!link) return;
+                    e.preventDefault();
+                    const idx = link.dataset.index;
+                    // hide all blocks for this section
+                    document.querySelectorAll('.iteration-block[id^="iteration-' + key + '-"]').forEach(function (el) {
                         el.style.display = 'none';
                     });
-                    // show selected block
-                    var target = document.getElementById('iteration-' + idx);
+                    // show selected block for this section
+                    const target = document.getElementById('iteration-' + key + '-' + idx);
                     if (target) {
                         target.style.display = '';
                     }
-                    // update active class
+                    // update active class within this nav
                     nav.querySelectorAll('.nav-link').forEach(function (l) {
                         l.classList.remove('active');
                     });
-                    this.classList.add('active');
+                    link.classList.add('active');
                 });
             });
         });
     </script>
+
 @endif
 
                                                 {{-- Hasil Konvergen --}}
