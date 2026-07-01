@@ -27,7 +27,7 @@
                         <button class="btn btn-success" data-toggle="modal" data-target="#normalisasiModal">
     Normalisasi
 </button>
-<a href="{{ asset('template/dataset_template.xlsx') }}" class="btn btn-secondary ml-2">Download Template</a>
+<a href="{{ asset('template/dataset_new.xlsx') }}" class="btn btn-secondary ml-2">Download Template</a>
                     </div>
                 </div>
 
