@@ -40,12 +40,10 @@
                                 <th>Produk</th>
                                 <th>Kategori Barang</th>
                                 <th>Harga</th>
-                                <th>Januari Jumlah Product</th>
-                                <th>Februari Jumlah Product</th>
-                                <th>Maret Jumlah Product</th>
-                                <th>April Jumlah Product</th>
+                                <th>Tahun</th>
+                                <th>Bulan</th>
+                                <th>Jumlah Product</th>
                                 <th>Total Penjualan</th>
-                                <th>Total Product</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -57,12 +55,10 @@
                                     <td>{{ $dataset->produk }}</td>
                                     <td>{{ $dataset->kategori_barang }}</td>
                                     <td>{{ $dataset->harga }}</td>
-                                    <td>{{ $dataset->january_jumlah_product }}</td>
-                                    <td>{{ $dataset->februari_jumlah_product }}</td>
-                                    <td>{{ $dataset->maret_jumlah_product }}</td>
-                                    <td>{{ $dataset->april_jumlah_product }}</td>
-                                    <td>{{ $dataset->total_penjualan }}</td>
+                                    <td>{{ $dataset->tahun_penjualan }}</td>
+                                    <td>{{ $dataset->bulan }}</td>
                                     <td>{{ $dataset->total_product }}</td>
+                                    <td>{{ $dataset->total_penjualan }}</td>
                                     <td>
                                         <a href="{{ route('dataset.edit', $dataset->id) }}"
                                             class="btn btn-warning btn-sm">Edit</a>
@@ -100,12 +96,10 @@
                                 <th>Produk</th>
                                 <th>Kategori Barang</th>
                                 <th>Harga</th>
-                                <th>Januari Jumlah Product</th>
-                                <th>Februari Jumlah Product</th>
-                                <th>Maret Jumlah Product</th>
-                                <th>April Jumlah Product</th>
+                                <th>Tahun</th>
+                                <th>Bulan</th>
+                                <th>Jumlah Product</th>
                                 <th>Total Penjualan</th>
-                                <th>Total Product</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -117,12 +111,10 @@
                                     <td>{{ $dataset->produk }}</td>
                                     <td>{{ $dataset->kategori_barang }}</td>
                                     <td>{{ $dataset->harga }}</td>
-                                    <td>{{ $dataset->january_jumlah_product }}</td>
-                                    <td>{{ $dataset->februari_jumlah_product }}</td>
-                                    <td>{{ $dataset->maret_jumlah_product }}</td>
-                                    <td>{{ $dataset->april_jumlah_product }}</td>
-                                    <td>{{ $dataset->total_penjualan }}</td>
+                                    <td>{{ $dataset->tahun_penjualan }}</td>
+                                    <td>{{ $dataset->bulan }}</td>
                                     <td>{{ $dataset->total_product }}</td>
+                                    <td>{{ $dataset->total_penjualan }}</td>
                                     <td>
                                         <a href="{{ route('dataset.edit', $dataset->id) }}"
                                             class="btn btn-warning btn-sm">Edit</a>

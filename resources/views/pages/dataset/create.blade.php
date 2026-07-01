@@ -38,23 +38,37 @@
                         </div>
 
                         <div class="col-md-3 mb-3">
-                            <label>Januari</label>
-                            <input type="number" name="january_jumlah_product" class="form-control" required>
+                            <label>Tahun Penjualan</label>
+                            <select name="tahun_penjualan" class="form-control" required>
+                                <option value="">-- Pilih Tahun --</option>
+                                @php
+                                    $currentYear = date('Y');
+                                @endphp
+                                @for ($y = $currentYear - 5; $y <= $currentYear + 5; $y++)
+                                    <option value="{{ $y }}" {{ $y == $currentYear ? 'selected' : '' }}>
+                                        {{ $y }}
+                                    </option>
+                                @endfor
+                            </select>
                         </div>
 
                         <div class="col-md-3 mb-3">
-                            <label>Februari</label>
-                            <input type="number" name="februari_jumlah_product" class="form-control" required>
-                        </div>
-
-                        <div class="col-md-3 mb-3">
-                            <label>Maret</label>
-                            <input type="number" name="maret_jumlah_product" class="form-control" required>
-                        </div>
-
-                        <div class="col-md-3 mb-3">
-                            <label>April</label>
-                            <input type="number" name="april_jumlah_product" class="form-control" required>
+                            <label>Bulan Penjualan</label>
+                            <select name="bulan" class="form-control" required>
+                                <option value="">-- Pilih Bulan --</option>
+                                <option value="Januari">Januari</option>
+                                <option value="Februari">Februari</option>
+                                <option value="Maret">Maret</option>
+                                <option value="April">April</option>
+                                <option value="Mei">Mei</option>
+                                <option value="Juni">Juni</option>
+                                <option value="Juli">Juli</option>
+                                <option value="Agustus">Agustus</option>
+                                <option value="September">September</option>
+                                <option value="Oktober">Oktober</option>
+                                <option value="November">November</option>
+                                <option value="Desember">Desember</option>
+                            </select>
                         </div>
 
                         <div class="col-md-6 mb-3">
@@ -63,7 +77,7 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label>Total Produk</label>
+                            <label>Jumlah Produk</label>
                             <input type="number" name="total_product" class="form-control" required>
                         </div>
 

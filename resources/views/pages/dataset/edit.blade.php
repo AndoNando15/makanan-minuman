@@ -48,27 +48,33 @@
                         </div>
 
                         <div class="col-md-3 mb-3">
-                            <label>Januari</label>
-                            <input type="number" name="january_jumlah_product" class="form-control"
-                                value="{{ old('january_jumlah_product', $dataset->january_jumlah_product) }}" required>
+                            <label>Tahun Penjualan</label>
+                            <select name="tahun_penjualan" class="form-control" required>
+                                <option value="">-- Pilih Tahun --</option>
+                                @php
+                                    $currentYear = date('Y');
+                                @endphp
+                                @for ($y = $currentYear - 5; $y <= $currentYear + 5; $y++)
+                                    <option value="{{ $y }}" {{ old('tahun_penjualan', $dataset->tahun_penjualan) == $y ? 'selected' : '' }}>
+                                        {{ $y }}
+                                    </option>
+                                @endfor
+                            </select>
                         </div>
 
                         <div class="col-md-3 mb-3">
-                            <label>Februari</label>
-                            <input type="number" name="februari_jumlah_product" class="form-control"
-                                value="{{ old('februari_jumlah_product', $dataset->februari_jumlah_product) }}" required>
-                        </div>
-
-                        <div class="col-md-3 mb-3">
-                            <label>Maret</label>
-                            <input type="number" name="maret_jumlah_product" class="form-control"
-                                value="{{ old('maret_jumlah_product', $dataset->maret_jumlah_product) }}" required>
-                        </div>
-
-                        <div class="col-md-3 mb-3">
-                            <label>April</label>
-                            <input type="number" name="april_jumlah_product" class="form-control"
-                                value="{{ old('april_jumlah_product', $dataset->april_jumlah_product) }}" required>
+                            <label>Bulan Penjualan</label>
+                            <select name="bulan" class="form-control" required>
+                                <option value="">-- Pilih Bulan --</option>
+                                @php
+                                    $months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                                @endphp
+                                @foreach($months as $m)
+                                    <option value="{{ $m }}" {{ old('bulan', $dataset->bulan) == $m ? 'selected' : '' }}>
+                                        {{ $m }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
 
                         <div class="col-md-6 mb-3">
@@ -78,7 +84,7 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label>Total Produk</label>
+                            <label>Jumlah Produk</label>
                             <input type="number" name="total_product" class="form-control"
                                 value="{{ old('total_product', $dataset->total_product) }}" required>
                         </div>

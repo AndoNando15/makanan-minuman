@@ -27,29 +27,17 @@ class DatasetImport implements ToModel, WithHeadingRow
 
         $harga = $this->toNumber($this->getValue($row, ['harga']));
 
-        $january = $this->toNumber($this->getValue($row, [
-            'january_jumlah_product',
-            'januari_jumlah_product'
-        ]));
+        $tahunPenjualan = $this->toNumber($this->getValue($row, ['tahun_penjualan', 'tahun']));
 
-        $februari = $this->toNumber($this->getValue($row, [
-            'februari_jumlah_product'
-        ]));
+        $tahunPenjualan = $this->toNumber($this->getValue($row, ['tahun_penjualan', 'tahun']));
+        $bulan = $this->getValue($row, ['bulan', 'bulan_penjualan']);
 
-        $maret = $this->toNumber($this->getValue($row, [
-            'maret_jumlah_product'
-        ]));
-
-        $april = $this->toNumber($this->getValue($row, [
-            'april_jumlah_product'
-        ]));
-
-        $totalProductFromExcel = $this->getValue($row, ['total_product']);
+        $totalProductFromExcel = $this->getValue($row, ['total_product', 'jumlah_product']);
         $totalPenjualanFromExcel = $this->getValue($row, ['total_penjualan']);
 
         $totalProduct = $totalProductFromExcel !== null && $totalProductFromExcel !== ''
             ? $this->toNumber($totalProductFromExcel)
-            : ($january + $februari + $maret + $april);
+            : 0;
 
         $totalPenjualan = $totalPenjualanFromExcel !== null && $totalPenjualanFromExcel !== ''
             ? $this->toNumber($totalPenjualanFromExcel)
@@ -60,10 +48,8 @@ class DatasetImport implements ToModel, WithHeadingRow
             'produk' => $produk,
             'kategori_barang' => $kategoriBarang,
             'harga' => $harga,
-            'january_jumlah_product' => $january,
-            'februari_jumlah_product' => $februari,
-            'maret_jumlah_product' => $maret,
-            'april_jumlah_product' => $april,
+            'bulan' => $bulan,
+            'tahun_penjualan' => $tahunPenjualan ?: date('Y'),
             'total_penjualan' => $totalPenjualan,
             'total_product' => $totalProduct,
         ]);
